@@ -12,7 +12,7 @@ Sistema de corridas estilo Uber desenvolvido com Spring Boot, Kafka, Redis e Rab
 ## 🛠️ Tecnologias
 
 - Java 17
-- Spring Boot 3.3.0
+- Spring Boot 4.6.0
 - PostgreSQL 15
 - Redis 7
 - RabbitMQ 3
@@ -24,4 +24,4 @@ Sistema de corridas estilo Uber desenvolvido com Spring Boot, Kafka, Redis e Rab
 ### 1. Subir infraestrutura (Docker)
 
 ```bash
-docker-compose up -d
+docker compose up -d
