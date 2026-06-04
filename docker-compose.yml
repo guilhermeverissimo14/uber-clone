@@ -1,0 +1,120 @@
+services:
+  # PostgreSQL - Banco de dados principal
+  postgres:
+    image: postgis/postgis:15-3.4-alpine
+    container_name: uber-postgres
+    environment:
+      POSTGRES_USER: uberclone
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: uberclone
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init-database.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - uber-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U uberclone"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis - Cache e Geolocalização
+  redis:
+    image: redis:7-alpine
+    container_name: uber-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - uber-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # RabbitMQ - Mensageria
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: uber-rabbitmq
+    ports:
+      - "5672:5672" # AMQP
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - uber-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redpanda - Kafka-compatible (Streaming de eventos)
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: uber-kafka
+    command:
+      - redpanda
+      - start
+      - --smp
+      - "1"
+      - --reserve-memory
+      - 0M
+      - --overprovisioned
+      - --node-id
+      - "0"
+      - --kafka-addr
+      - PLAINTEXT://0.0.0.0:9092
+      - --advertise-kafka-addr
+      - PLAINTEXT://localhost:9092
+    ports:
+      - "9092:9092" # Kafka API
+      - "9644:9644" # Admin API
+    volumes:
+      - kafka_data:/var/lib/redpanda/data
+    networks:
+      - uber-network
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+
+  # Kafka UI - Interface para gerenciar Kafka/Redpanda
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: uber-kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: redpanda:9092
+      DYNAMIC_CONFIG_ENABLED: "true"
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    networks:
+      - uber-network
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  kafka_data:
+    driver: local
+
+networks:
+  uber-network:
+    driver: bridge
