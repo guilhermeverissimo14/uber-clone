@@ -1,5 +1,7 @@
 package com.uberclone.user_service.entity;
 
+import com.uberclone.user_service.enums.UserStatus;
+import com.uberclone.user_service.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,9 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.usertype.UserType;
-
-import com.uberclone.user_service.enums.UserStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -17,10 +16,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entidade principal de usuário
- * Representa tanto passageiros quanto motoristas
- */
+// Entidade principal de usuário
+// Representa tanto passageiros quanto motoristas
 @Entity
 @Table(name = "users")
 @Data
@@ -80,7 +77,6 @@ public class User {
     private LocalDateTime updatedAt;
 
     // RELACIONAMENTOS
-
     
     //Endereços salvos do usuário
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
