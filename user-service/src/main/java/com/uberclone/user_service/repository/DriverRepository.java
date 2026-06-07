@@ -13,52 +13,34 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Repository para operações de banco de dados da entidade Driver
- */
+// Repository para operações de banco de dados da entidade Driver
 @Repository
 public interface DriverRepository extends JpaRepository<Driver, Long> {
 
-    /**
-     * Busca motorista por ID do usuário
-     */
+    // Busca motorista por ID do usuário
     Optional<Driver> findByUserId(Long userId);
 
-    /**
-     * Busca motorista pelo objeto User
-     */
+    // Busca motorista pelo objeto User
     Optional<Driver> findByUser(User user);
 
-    /**
-     * Busca motorista por número da CNH
-     */
+    // Busca motorista por número da CNH
     Optional<Driver> findByLicenseNumber(String licenseNumber);
 
-    /**
-     * Verifica se existe motorista para o usuário
-     */
+    // Verifica se existe motorista para o usuário
     boolean existsByUserId(Long userId);
 
-    /**
-     * Verifica se existe motorista com o número da CNH
-     */
+    // Verifica se existe motorista com o número da CNH
     boolean existsByLicenseNumber(String licenseNumber);
 
-    /**
-     * Busca motoristas por status
-     */
+    // Busca motoristas por status
     List<Driver> findByStatus(DriverStatus status);
 
-    /**
-     * Busca motoristas disponíveis (online)
-     */
+    // Busca motoristas disponíveis (online)
     @Query("SELECT d FROM Driver d WHERE d.isAvailable = true AND d.status = 'APPROVED'")
     List<Driver> findAvailableDrivers();
 
-    /**
-     * Busca motoristas próximos (raio em km)
-     * Fórmula de Haversine simplificada
-     */
+    // Busca motoristas próximos (raio em km)
+    // Fórmula de Haversine simplificada
     @Query(value = "SELECT * FROM drivers d " +
             "WHERE d.is_available = true " +
             "AND d.status = 'APPROVED' " +
@@ -89,48 +71,34 @@ public interface DriverRepository extends JpaRepository<Driver, Long> {
             @Param("radiusKm") Double radiusKm
     );
 
-    /**
-     * Busca motoristas aprovados
-     */
+    // Busca motoristas aprovados
     @Query("SELECT d FROM Driver d WHERE d.status = 'APPROVED'")
     List<Driver> findApprovedDrivers();
 
-    /**
-     * Busca motoristas pendentes de aprovação
-     */
+    // Busca motoristas pendentes de aprovação
     @Query("SELECT d FROM Driver d WHERE d.status = 'PENDING'")
     List<Driver> findPendingDrivers();
 
-    /**
-     * Busca motorista com todos os relacionamentos (eager)
-     */
+    // Busca motorista com todos os relacionamentos (eager)
     @Query("SELECT d FROM Driver d " +
             "LEFT JOIN FETCH d.user " +
             "LEFT JOIN FETCH d.vehicles " +
             "WHERE d.id = :id")
     Optional<Driver> findByIdWithRelationships(@Param("id") Long id);
 
-    /**
-     * Busca motoristas inativos há mais de X minutos
-     */
+    // Busca motoristas inativos há mais de X minutos
     @Query("SELECT d FROM Driver d " +
             "WHERE d.isAvailable = true " +
             "AND d.lastLocationAt < :threshold")
     List<Driver> findInactiveDrivers(@Param("threshold") LocalDateTime threshold);
 
-    /**
-     * Conta motoristas por status
-     */
+    // Conta motoristas por status
     Long countByStatus(DriverStatus status);
 
-    /**
-     * Conta motoristas disponíveis
-     */
+    // Conta motoristas disponíveis
     @Query("SELECT COUNT(d) FROM Driver d WHERE d.isAvailable = true AND d.status = 'APPROVED'")
     Long countAvailableDrivers();
 
-    /**
-     * Deleta motorista por ID do usuário
-     */
+    // Deleta motorista por ID do usuário
     void deleteByUserId(Long userId);
 }
