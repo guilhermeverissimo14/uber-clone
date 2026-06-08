@@ -15,9 +15,7 @@ public class KafkaConfig {
     @Value("${kafka.topics.driver-events}")
     private String driverEventsTopic;
 
-    /**
-     * Cria tópico de eventos de usuário
-     */
+   /// Cria tópico de eventos de usuário
     @Bean
     public NewTopic userEventsTopic() {
         return TopicBuilder
@@ -27,9 +25,7 @@ public class KafkaConfig {
                 .build();
     }
 
-    /**
-     * Cria tópico de eventos de motorista
-     */
+    // Cria tópico de eventos de motorista
     @Bean
     public NewTopic driverEventsTopic() {
         return TopicBuilder
