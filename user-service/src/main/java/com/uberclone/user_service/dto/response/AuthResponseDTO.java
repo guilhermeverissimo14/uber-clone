@@ -1,7 +1,6 @@
 package com.uberclone.user_service.dto.response;
 
 
-import com.uberclone.user_service.enums.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
