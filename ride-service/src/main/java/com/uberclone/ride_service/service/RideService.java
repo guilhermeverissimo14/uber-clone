@@ -13,9 +13,11 @@ import com.uberclone.ride_service.repository.RideRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -41,7 +43,7 @@ public class RideService {
 
         // Bloqueia se o passageiro já tem uma corrida ativa
         if (rideRepository.hasActiveRide(dto.getPassengerId())) {
-            throw new IllegalStateException("Passageiro já possui uma corrida ativa");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Passageiro já possui uma corrida ativa");
         }
 
         RideLocation origin = toRideLocation(dto.getOrigin());

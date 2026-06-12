@@ -242,7 +242,7 @@ CREATE INDEX idx_notifications_is_read ON notifications(is_read);
 
 -- Usuário passageiro de teste
 INSERT INTO users (email, password_hash, full_name, phone, user_type) 
-VALUES ('passenger@test.com', '$2a$10$xYzExample', 'João Silva', '11999999999', 'PASSENGER');
+VALUES ('passenger@test.com', '$2a$10$xYzExample', 'João Silva', '11999999999', 'PASSENGER'); 
 
 -- Usuário motorista de teste
 INSERT INTO users (email, password_hash, full_name, phone, user_type) 
