@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Service responsável pela lógica de negócio de passageiros
  */
@@ -17,6 +20,18 @@ import org.springframework.transaction.annotation.Transactional;
 public class PassengerService {
 
     private final PassengerRepository passengerRepository;
+
+    //Busca todos os passageiros
+    @Transactional(readOnly = true)
+    public List<PassengerResponseDTO> findAll() {
+        log.info("Buscando todos os passageiros");
+
+        return passengerRepository.findAll()
+                .stream()
+                .map(PassengerResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
 
     /**
      * Busca passageiro por ID

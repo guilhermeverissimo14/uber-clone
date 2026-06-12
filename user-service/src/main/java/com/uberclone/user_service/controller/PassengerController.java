@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 // Controller para operações de passageiros
 @RestController
 @RequestMapping("/api/passengers")
@@ -16,6 +18,15 @@ import org.springframework.web.bind.annotation.*;
 public class PassengerController {
 
     private final PassengerService passengerService;
+
+    // GET /api/passengers
+    // Busca todos os passageiros
+    @GetMapping
+    public ResponseEntity<?> getAllPassengers() {
+        log.info("GET /api/passengers");
+        List<PassengerResponseDTO> response = passengerService.findAll();
+        return ResponseEntity.ok(response);
+    }
 
     // GET /api/passengers/{id}
     // Busca passageiro por ID
